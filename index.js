@@ -1,32 +1,31 @@
+require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
 const { Resend } = require("resend");
 
 const app = express();
-app.use(cors());
 app.use(express.json());
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.post("/send-otp", async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email is required" });
+
   try {
-    const { email, otp } = req.body;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await resend.emails.send({
-      from: "OTP Sender <onboarding@resend.dev>",
+      from: "otp@yourdomain.com", // <-- важно: домен нужно подтвердить в Resend
       to: email,
-      subject: "Ваш OTP код",
-      text: `Ваш код: ${otp}. Он действует 1 минуту.`,
+      subject: "Your OTP Code",
+      text: `Your OTP code is: ${otp}`,
     });
 
-    res.json({ success: true, message: "OTP отправлен" });
+    res.json({ success: true, otp }); // (для теста можно вернуть otp)
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, error: "Ошибка при отправке" });
+    res.status(500).json({ error: "Failed to send OTP" });
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на порту ${PORT}`);
-});
+app.listen(3000, () => console.log("Server running on port 3000"));
