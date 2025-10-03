@@ -15,7 +15,7 @@ app.post("/send-otp", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await resend.emails.send({
-      from: "otp@yourdomain.com", // <-- важно: домен нужно подтвердить в Resend
+      from: "voiceotpsender@gmail.com",
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP code is: ${otp}`,
