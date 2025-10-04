@@ -15,17 +15,18 @@ app.post("/send-otp", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await resend.emails.send({
-      from: "voiceotpsender@gmail.com",
+      from: "no-reply@yourdomain.com", // твой адрес Resend
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP code is: ${otp}`,
     });
 
-    res.json({ success: true, otp }); // (для теста можно вернуть otp)
+    res.json({ success: true, otp });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
